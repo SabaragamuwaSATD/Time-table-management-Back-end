@@ -1,0 +1,88 @@
+config:
+  target: http://localhost:3000
+  phases:
+    - duration: 300
+      arrivalRate: 1
+      name: Warm up phase
+    - duration: 600
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 300
+      arrivalRate: 10
+      rampTo: 20
+      name: Spike phase
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99 <= 500
+      - http.response_time.mean <= 300
+      - http.status.2xx >= 95
+
+scenarios:
+  - flow:
+      - post:
+          url: "/api/course"
+          json:
+            courseName: "Introduction to NodeJs"
+            description: "A comprehensive course covering JavaScript fundamentals and advanced topics."
+            courseCategory: "Programming"
+            instructor: "65fb04d5d87ec37fbd081c56" # Assuming the instructor's ObjectId from the User collection
+            instructorName: "Jacky chan"
+            courseCover: ["https://example.com/course-cover.jpg"]
+            rating: 4.5
+            suspended: false
+            lessons:
+              - title: "Introduction to Variables"
+                description: "Learn about variables, data types, and variable declarations in JavaScript."
+                material:
+                  - "https://example.com/lesson1.pdf"
+                  - "https://example.com/lesson1-code.zip"
+              - title: "Functions and Scope"
+                description: "Explore functions, function declarations, and scope in JavaScript."
+                material:
+                  - "https://example.com/lesson2.pdf"
+                  - "https://example.com/lesson2-code.zip"
+              - title: "Objects and Arrays"
+                description: "Understand objects, arrays, and their manipulation in JavaScript."
+                material:
+                  - "https://example.com/lesson3.pdf"
+                  - "https://example.com/lesson3-code.zip"
+      - get:
+          url: "/api/course"
+      - get:
+          url: "/api/course/65ffaa243a03a02e04dd5e53"
+      - put:
+          url: "/api/course/65ffaa243a03a02e04dd5e53"
+          json:
+            courseName: "Introduction to React"
+            description: "A comprehensive course covering JavaScript fundamentals and advanced topics."
+            courseCategory: "Programming"
+            instructor: "65fb04d5d87ec37fbd081c56" # Assuming the instructor's ObjectId from the User collection
+            instructorName: "Jacky chan"
+            courseCover: ["https://example.com/course-cover.jpg"]
+            rating: 4.5
+            suspended: false
+            lessons:
+              - title: "Introduction to Variables"
+                description: "Learn about variables, data types, and variable declarations in JavaScript."
+                material:
+                  - "https://example.com/lesson1.pdf"
+                  - "https://example.com/lesson1-code.zip"
+              - title: "Functions and Scope"
+                description: "Explore functions, function declarations, and scope in JavaScript."
+                material:
+                  - "https://example.com/lesson2.pdf"
+                  - "https://example.com/lesson2-code.zip"
+              - title: "Objects and Arrays"
+                description: "Understand objects, arrays, and their manipulation in JavaScript."
+                material:
+                  - "https://example.com/lesson3.pdf"
+                  - "https://example.com/lesson3-code.zip"
+      - delete:
+          url: "/api/course/65ffad7c272b8c2c390e9320"

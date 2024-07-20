@@ -1,0 +1,51 @@
+config:
+  target: http://localhost:3000
+  phases:
+    - duration: 300
+      arrivalRate: 1
+      name: Warm up phase
+    - duration: 600
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 300
+      arrivalRate: 10
+      rampTo: 20
+      name: Spike phase
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99 <= 500
+      - http.response_time.mean <= 300
+      - http.status.2xx >= 95
+
+scenarios:
+  - flow:
+      - put:
+          url: "/api/users/6628b69c19c7cc63c976de33"
+          json:
+            username: "Tharindu Sabaragamuwa"
+            email: "tharindusabaragamuwa6@gmail.com"
+            password: "Idontknow"
+            isAdmin: true
+            isLecturer: false
+            isInstructor: false
+            isStudent: false
+            enrolledCourses:
+              - courseId: "65fe63a921647402cd8e1fe8"
+                progress: "50%"
+                status: "InProgress"
+              - courseId: "66289680d9aea02fd7d2eb32"
+                progress: "50%"
+                status: "InProgress"
+      - get:
+          url: "/api/users/6628b69c19c7cc63c976de33"
+      - get:
+          url: "/api/users"
+      - delete:
+          url: "/api/users/6628b69c19c7cc63c976de33"
